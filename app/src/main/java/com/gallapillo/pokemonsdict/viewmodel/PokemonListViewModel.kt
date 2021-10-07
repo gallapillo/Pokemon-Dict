@@ -72,11 +72,11 @@ class PokemonListViewModel @Inject constructor(
     fun loadPokemonPaginated() {
         viewModelScope.launch {
             isLoading.value = true
-            when (val result = repository.getPokemonList(PAGE_SIZE, curPage * PAGE_SIZE)) {
+            when(val result = repository.getPokemonList(PAGE_SIZE, curPage * PAGE_SIZE)) {
                 is Resource.Success -> {
                     endReached.value = curPage * PAGE_SIZE >= result.data!!.count
-                    val pokemonEntries = result.data.results.mapIndexed { index, entry ->
-                        val number = if (entry.url.endsWith("/")) {
+                    val pokedexEntries = result.data.results.mapIndexed { index, entry ->
+                        val number = if(entry.url.endsWith("/")) {
                             entry.url.dropLast(1).takeLastWhile { it.isDigit() }
                         } else {
                             entry.url.takeLastWhile { it.isDigit() }
@@ -88,7 +88,7 @@ class PokemonListViewModel @Inject constructor(
 
                     loadError.value = ""
                     isLoading.value = false
-                    pokemonList.value += pokemonEntries
+                    pokemonList.value += pokedexEntries
                 }
                 is Resource.Error -> {
                     loadError.value = result.message!!
@@ -97,7 +97,6 @@ class PokemonListViewModel @Inject constructor(
             }
         }
     }
-
     /* Функция для потчета цвета */
     fun calcDominantColor(drawable: Drawable, onFinish: (Color) -> Unit) {
         val bmp = (drawable as BitmapDrawable).bitmap.copy(Bitmap.Config.ARGB_8888, true)

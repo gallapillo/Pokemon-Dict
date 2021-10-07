@@ -16,8 +16,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.gallapillo.pokemonsdict.pokemondetail.PokemonDetailScreen
-import com.gallapillo.pokemonsdict.pokemonlist.PokemonListScreen
 import com.gallapillo.pokemonsdict.ui.theme.PokemonsDictTheme
+import com.plcoding.jetpackcomposepokedex.pokemonlist.PokemonListScreen
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 

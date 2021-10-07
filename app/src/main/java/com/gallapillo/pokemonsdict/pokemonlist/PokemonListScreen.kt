@@ -1,16 +1,14 @@
-package com.gallapillo.pokemonsdict.pokemonlist
+package com.plcoding.jetpackcomposepokedex.pokemonlist
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -18,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.isFocused
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -30,7 +28,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import coil.request.ImageRequest
@@ -40,11 +37,10 @@ import com.gallapillo.pokemonsdict.ui.theme.RobotoCondensed
 import com.gallapillo.pokemonsdict.viewmodel.PokemonListViewModel
 import com.google.accompanist.coil.CoilImage
 
-/* Главный список покемонов */
+
 @Composable
 fun PokemonListScreen(
-    navController: NavController,
-    viewModel: PokemonListViewModel = hiltNavGraphViewModel()
+    navController: NavController
 ) {
     Surface(
         color = MaterialTheme.colors.background,
@@ -65,7 +61,7 @@ fun PokemonListScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                viewModel.searchPokemonList(it)
+
             }
             Spacer(modifier = Modifier.height(16.dp))
             PokemonList(navController = navController)
@@ -98,11 +94,11 @@ fun SearchBar(
             textStyle = TextStyle(color = Color.Black),
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(5.dp, CircleShape)
-                .background(Color.White, CircleShape)
+                .shadow(5.dp, RoundedCornerShape(2.5.dp))
+                .background(Color.White, RoundedCornerShape(10.dp))
                 .padding(horizontal = 20.dp, vertical = 12.dp)
                 .onFocusChanged {
-                    isHintDisplayed = !it.isFocused
+                    isHintDisplayed = it != FocusState.Active
                 }
         )
         if(isHintDisplayed) {
@@ -114,6 +110,46 @@ fun SearchBar(
             )
         }
     }
+}
+
+@Composable
+fun PokemonList(
+    navController: NavController,
+    viewModel: PokemonListViewModel = hiltNavGraphViewModel()
+) {
+    val pokemonList by remember { viewModel.pokemonList }
+    val endReached by remember { viewModel.endReached }
+    val loadError by remember { viewModel.loadError }
+    val isLoading by remember { viewModel.isLoading }
+
+    LazyColumn(contentPadding = PaddingValues(16.dp)) {
+        val itemCount = if(pokemonList.size % 2 == 0) {
+            pokemonList.size / 2
+        } else {
+            pokemonList.size / 2 + 1
+        }
+        items(itemCount) {
+            if(it >= itemCount - 1 && !endReached) {
+                viewModel.loadPokemonPaginated()
+            }
+            PokemonRow(rowIndex = it, entries = pokemonList, navController = navController)
+        }
+    }
+
+    Box(
+        contentAlignment = Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        if(isLoading) {
+            CircularProgressIndicator(color = MaterialTheme.colors.primary)
+        }
+        if(loadError.isNotEmpty()) {
+            RetrySection(error = loadError) {
+                viewModel.loadPokemonPaginated()
+            }
+        }
+    }
+
 }
 
 @Composable
@@ -181,58 +217,23 @@ fun PokemonEntry(
 }
 
 @Composable
-fun PokemonList(
-    navController: NavController,
-    viewModel: PokemonListViewModel = hiltNavGraphViewModel()
-) {
-    val pokemonList by remember { viewModel.pokemonList }
-    val endReached by remember { viewModel.endReached }
-    val loadError by remember { viewModel.loadError }
-    val isLoading by remember { viewModel.isLoading }
-    val isSearching by remember { viewModel.isSearching }
-
-    LazyColumn(contentPadding = PaddingValues(16.dp)) {
-        val itemCount = if(pokemonList.size % 2 == 0) {
-            pokemonList.size / 2
-        } else {
-            pokemonList.size / 2 + 1
-        }
-        items(itemCount) {
-            if (it >= itemCount - 1 && !endReached && !isLoading && !isSearching) {
-                viewModel.loadPokemonPaginated()
-            }
-            PokemonRow(rowIndex = it, entry = pokemonList, navController = navController)
-        }
-    }
-    Box(
-        contentAlignment = Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        if (isLoading) {
-            CircularProgressIndicator(color = MaterialTheme.colors.primary)
-        }
-        if (loadError.isNotEmpty()) {
-            RetrySection(error = loadError) {
-                viewModel.loadPokemonPaginated()
-            }
-        }
-    }
-}
-
-@Composable
 fun PokemonRow(
     rowIndex: Int,
-    entry: List<PokemonListEntry>,
+    entries: List<PokemonListEntry>,
     navController: NavController
 ) {
     Column {
         Row {
-            PokemonEntry(entry = entry[rowIndex + 2], navController = navController,
+            PokemonEntry(
+                entry = entries[rowIndex * 2],
+                navController = navController,
                 modifier = Modifier.weight(1f)
-                )
+            )
             Spacer(modifier = Modifier.width(16.dp))
-            if (entry.size >= rowIndex + 2 + 2) {
-                PokemonEntry(entry = entry[rowIndex + 2 + 1], navController = navController,
+            if(entries.size >= rowIndex * 2 + 2) {
+                PokemonEntry(
+                    entry = entries[rowIndex * 2 + 1],
+                    navController = navController,
                     modifier = Modifier.weight(1f)
                 )
             } else {
