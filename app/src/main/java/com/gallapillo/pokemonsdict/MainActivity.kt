@@ -21,6 +21,7 @@ import com.gallapillo.pokemonsdict.ui.theme.PokemonsDictTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
+/* главное активити */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

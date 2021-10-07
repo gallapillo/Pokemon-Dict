@@ -7,6 +7,7 @@ import com.gallapillo.pokemonsdict.z_utils.Resource
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 
+/* Главный репозиторий приложения */
 @ActivityScoped
 class PokemonRepository @Inject constructor(
     private val api: PokemonApi

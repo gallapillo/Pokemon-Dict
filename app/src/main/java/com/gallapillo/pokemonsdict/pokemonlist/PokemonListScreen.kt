@@ -40,6 +40,7 @@ import com.gallapillo.pokemonsdict.ui.theme.RobotoCondensed
 import com.gallapillo.pokemonsdict.viewmodel.PokemonListViewModel
 import com.google.accompanist.coil.CoilImage
 
+/* Главный список покемонов */
 @Composable
 fun PokemonListScreen(
     navController: NavController,

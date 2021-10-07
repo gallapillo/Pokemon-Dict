@@ -27,7 +27,7 @@ import com.gallapillo.pokemonsdict.viewmodel.PokemonDetailViewModel
 import com.gallapillo.pokemonsdict.z_utils.Resource
 import com.google.accompanist.coil.CoilImage
 
-
+/* Дизайн Детайл скрин */
 @Composable
 fun PokemonDetailScreen(
     dominantColor: Color,

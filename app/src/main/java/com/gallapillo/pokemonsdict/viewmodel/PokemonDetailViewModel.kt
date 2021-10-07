@@ -6,6 +6,7 @@ import com.gallapillo.pokemonsdict.repository.PokemonRepository
 import com.gallapillo.pokemonsdict.z_utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+/* ViewModel страницы покемона */
 
 @HiltViewModel
 class PokemonDetailViewModel @Inject constructor(

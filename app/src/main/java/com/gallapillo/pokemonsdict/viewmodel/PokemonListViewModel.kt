@@ -19,6 +19,8 @@ import okhttp3.Dispatcher
 import java.util.*
 import javax.inject.Inject
 
+/* ViewModel покемонов */
+
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
     private val repository: PokemonRepository
@@ -39,6 +41,7 @@ class PokemonListViewModel @Inject constructor(
         loadPokemonPaginated()
     }
 
+    /* Поиск по списку */
     fun searchPokemonList(query: String) {
         val listToSearch = if (isSearchStarting) {
             pokemonList.value
@@ -64,6 +67,7 @@ class PokemonListViewModel @Inject constructor(
         }
     }
 
+    /* Загрузка списка постранично спомощью корутина */
     fun loadPokemonPaginated() {
         viewModelScope.launch {
             isLoading.value = true
@@ -93,6 +97,7 @@ class PokemonListViewModel @Inject constructor(
         }
     }
 
+    /* Функция для потчета цвета */
     fun calcDominantColor(drawable: Drawable, onFinish: (Color) -> Unit) {
         val bmp = (drawable as BitmapDrawable).bitmap.copy(Bitmap.Config.ARGB_8888, true)
 

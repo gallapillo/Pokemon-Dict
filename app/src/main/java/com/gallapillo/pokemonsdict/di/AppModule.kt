@@ -11,6 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
+/* Провайдер для апи и репозитория */
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
