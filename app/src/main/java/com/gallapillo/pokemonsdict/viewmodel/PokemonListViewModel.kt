@@ -43,16 +43,17 @@ class PokemonListViewModel @Inject constructor(
 
     /* Поиск по списку */
     fun searchPokemonList(query: String) {
-        val listToSearch = if (isSearchStarting) {
+        val listToSearch = if(isSearchStarting) {
             pokemonList.value
         } else {
             cachedPokemonList
         }
         viewModelScope.launch(Dispatchers.Default) {
-            if (query.isEmpty()) {
+            if(query.isEmpty()) {
                 pokemonList.value = cachedPokemonList
                 isSearching.value = false
                 isSearchStarting = true
+                return@launch
             }
             val results = listToSearch.filter {
                 it.pokemonName.contains(query.trim(), ignoreCase = true) ||
