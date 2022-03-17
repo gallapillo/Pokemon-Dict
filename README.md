@@ -3,6 +3,7 @@
   - Kotlin
   - MVVM
   - Jetpack
+  - Jetpack Compose
   - Dager
   - Hilt
   - Retrofit
