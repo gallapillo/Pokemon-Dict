@@ -2,8 +2,6 @@
 ## Used Technologes
   - Kotlin
   - MVVM
-  - Jetpack
   - Jetpack Compose
-  - Dager
-  - Hilt
+  - Dager Hilt
   - Retrofit
